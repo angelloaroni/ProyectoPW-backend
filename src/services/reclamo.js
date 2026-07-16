@@ -10,7 +10,12 @@ const enriquecer = async (reclamo) => {
     return {
         ...plain,
         objetoNombre: objeto?.nombre ?? null,
-        alumnoCodigo: alumno?.codigo ?? null
+        objetoIcono: objeto?.icono ?? null,
+        objetoCategoria: objeto?.categoria ?? null,
+        objetoDescripcion: objeto?.descripcion ?? null,
+        objetoUbicacion: objeto?.ubicacion ?? null,
+        alumnoCodigo: alumno?.codigo ?? null,
+        alumnoNombre: alumno?.nombre ?? null
     };
 };
 
@@ -56,13 +61,14 @@ const crear = async (usuarioId, { objetoId, evidencia }) => {
     };
 };
 
-const resolver = async (id, aprobado) => {
+const resolver = async (id, aprobado, motivoRechazo) => {
     const reclamo = await reclamoRepo.findOne(id);
     if (!reclamo || reclamo.estado !== 'pendiente') {
         return { success: false, message: 'Reclamo no encontrado o ya fue resuelto.' };
     }
 
     reclamo.estado = aprobado ? 'aprobado' : 'rechazado';
+    reclamo.motivoRechazo = aprobado ? null : (motivoRechazo?.trim() || null);
     await reclamo.save();
 
     if (aprobado) {

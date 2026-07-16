@@ -30,8 +30,8 @@ const crear = async (req, res) => {
 
 const resolver = async (req, res) => {
     try {
-        const { aprobado } = req.body;
-        const result = await reclamoService.resolver(req.params.id, Boolean(aprobado));
+        const { aprobado, motivoRechazo } = req.body;
+        const result = await reclamoService.resolver(req.params.id, Boolean(aprobado), motivoRechazo);
         return res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Error inesperado', error: error.message });

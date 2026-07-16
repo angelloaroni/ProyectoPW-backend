@@ -19,6 +19,11 @@ const Reclamo = sequelize.define('reclamo', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    motivoRechazo: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null
+    },
     estado: {
         type: DataTypes.STRING,
         allowNull: false,

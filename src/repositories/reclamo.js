@@ -35,6 +35,20 @@ class ReclamoRepository extends RepositoryBase {
             return []
         }
     }
+
+    async findByUsuarioYObjeto(usuarioId, objetoId) {
+        try {
+            return await this.model.findOne({
+                where: {
+                    usuarioId: parseInt(usuarioId),
+                    objetoId: parseInt(objetoId)
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            return null
+        }
+    }
 }
 
 const repository = new ReclamoRepository(model);

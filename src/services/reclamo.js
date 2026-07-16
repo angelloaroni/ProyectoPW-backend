@@ -43,6 +43,11 @@ const crear = async (usuarioId, { objetoId, evidencia }) => {
         return { success: false, message: 'Este objeto ya no está disponible para reclamar.' };
     }
 
+    const reclamoExistente = await reclamoRepo.findByUsuarioYObjeto(usuarioId, objetoId);
+    if (reclamoExistente) {
+        return { success: false, message: 'Ya has reclamado este objeto. No puedes reclamarlo de nuevo.' };
+    }
+
     const reclamo = await reclamoRepo.create({
         objetoId: parseInt(objetoId),
         usuarioId: parseInt(usuarioId),

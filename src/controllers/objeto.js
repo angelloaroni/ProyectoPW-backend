@@ -23,8 +23,8 @@ const findOne = async (req, res) => {
 
 const crear = async (req, res) => {
     try {
-        const { nombre, categoria, descripcion, icono } = req.body;
-        const result = await objetoService.crear({ nombre, categoria, descripcion, icono });
+        const { nombre, categoria, descripcion, icono, ubicacion } = req.body;
+        const result = await objetoService.crear({ nombre, categoria, descripcion, icono, ubicacion });
         return res.status(result.success ? 201 : 400).json(result);
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Error inesperado', error: error.message });
@@ -33,8 +33,8 @@ const crear = async (req, res) => {
 
 const actualizar = async (req, res) => {
     try {
-        const { nombre, categoria, descripcion, icono } = req.body;
-        const result = await objetoService.actualizar(req.params.id, { nombre, categoria, descripcion, icono });
+        const { nombre, categoria, descripcion, icono, ubicacion } = req.body;
+        const result = await objetoService.actualizar(req.params.id, { nombre, categoria, descripcion, icono, ubicacion });
         return res.status(result.success ? 200 : 404).json(result);
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Error inesperado', error: error.message });

@@ -24,6 +24,11 @@ const Objeto = sequelize.define('objeto', {
         allowNull: false,
         defaultValue: '📦'
     },
+    ubicacion: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
     estado: {
         type: DataTypes.STRING,
         allowNull: false,

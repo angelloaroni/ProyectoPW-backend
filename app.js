@@ -5,6 +5,7 @@ import cors from 'cors';
 import usuarioRouter from './src/routes/usuario.js';
 import objetoRouter from './src/routes/objeto.js';
 import reclamoRouter from './src/routes/reclamo.js';
+import categoriaRouter from './src/routes/categoria.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,5 +18,6 @@ app.get('/', (req, res) => {
 app.use('/auth', usuarioRouter);
 app.use('/objeto', objetoRouter);
 app.use('/reclamo', reclamoRouter);
+app.use('/categoria', categoriaRouter);
 
 export default app;

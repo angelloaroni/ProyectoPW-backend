@@ -12,7 +12,7 @@ const listar = async () => {
 
 const obtener = async (id) => toApi(await objetoRepo.findOne(id));
 
-const crear = async ({ nombre, categoria, descripcion, icono }) => {
+const crear = async ({ nombre, categoria, descripcion, icono, ubicacion }) => {
     if (!nombre || !categoria || !descripcion) {
         return { success: false, message: 'Proporcione nombre, categoría y descripción.' };
     }
@@ -22,6 +22,7 @@ const crear = async ({ nombre, categoria, descripcion, icono }) => {
         categoria,
         descripcion,
         icono: icono || '📦',
+        ubicacion: ubicacion || null,
         estado: 'disponible'
     });
 
@@ -32,7 +33,7 @@ const crear = async ({ nombre, categoria, descripcion, icono }) => {
     return { success: true, message: 'Objeto publicado con éxito en el catálogo.', objeto: toApi(objeto) };
 };
 
-const actualizar = async (id, { nombre, categoria, descripcion, icono }) => {
+const actualizar = async (id, { nombre, categoria, descripcion, icono, ubicacion }) => {
     const objeto = await objetoRepo.findOne(id);
     if (!objeto) {
         return { success: false, message: 'Objeto no encontrado.' };
@@ -42,6 +43,7 @@ const actualizar = async (id, { nombre, categoria, descripcion, icono }) => {
     if (categoria !== undefined) objeto.categoria = categoria;
     if (descripcion !== undefined) objeto.descripcion = descripcion;
     if (icono !== undefined) objeto.icono = icono;
+    if (ubicacion !== undefined) objeto.ubicacion = ubicacion;
     await objeto.save();
 
     return { success: true, message: 'Objeto actualizado correctamente.', objeto: toApi(objeto) };
@@ -56,7 +58,6 @@ const eliminar = async (id) => {
     return { success: true, message: 'Objeto eliminado del catálogo.' };
 };
 
-// Usado internamente por el servicio de reclamos cuando un reclamo se aprueba.
 const marcarReclamado = async (id) => toApi(await objetoRepo.setEstado(id, 'reclamado'));
 
 const objetoService = { listar, obtener, crear, actualizar, eliminar, marcarReclamado, toApi };

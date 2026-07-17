@@ -1,15 +1,7 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-
 import repository from '../repositories/usuario.js';
 import reclamoRepo from '../repositories/reclamo.js';
-import { JWT_SECRET } from '../middleware/auth.js';
 
 const ROLES_VALIDOS = ['admin', 'student'];
-
-const generarToken = (id, codigo, nombre, rol) => {
-    return jwt.sign({ id, codigo, nombre, rol }, JWT_SECRET, { expiresIn: '7d' });
-};
 
 const sanitize = (usuario) => {
     const plain = usuario.get ? usuario.get({ plain: true }) : usuario;
@@ -28,13 +20,10 @@ const registrar = async ({ codigo, nombre, password, rol }) => {
         return { success: false, message: 'Ya existe un usuario con ese código.' };
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const nuevoUsuario = await repository.create({
         codigo,
         nombre,
-        password: hashedPassword,
+        password,
         rol: rolFinal,
         activo: true
     });
@@ -43,12 +32,9 @@ const registrar = async ({ codigo, nombre, password, rol }) => {
         return { success: false, message: 'No se pudo crear el usuario.' };
     }
 
-    const token = generarToken(nuevoUsuario.id, nuevoUsuario.codigo, nuevoUsuario.nombre, nuevoUsuario.rol);
-
     return {
         success: true,
         message: 'Usuario creado exitosamente',
-        token,
         usuario: sanitize(nuevoUsuario)
     };
 };
@@ -63,8 +49,7 @@ const login = async ({ codigo, password, rol }) => {
         return { success: false, message: 'Código o password incorrectos.' };
     }
 
-    const isPasswordValid = await bcrypt.compare(password, usr.password);
-    if (!isPasswordValid) {
+    if (usr.password !== password) {
         return { success: false, message: 'Código o password incorrectos.' };
     }
 
@@ -76,12 +61,9 @@ const login = async ({ codigo, password, rol }) => {
         return { success: false, message: 'Tu cuenta se encuentra bloqueada. Contacta al administrador.' };
     }
 
-    const token = generarToken(usr.id, usr.codigo, usr.nombre, usr.rol);
-
     return {
         success: true,
         message: 'Inicio de sesión exitoso',
-        token,
         usuario: sanitize(usr)
     };
 };

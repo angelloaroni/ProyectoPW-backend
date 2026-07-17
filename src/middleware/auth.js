@@ -1,26 +1,39 @@
-import 'dotenv/config';
-import jwt from 'jsonwebtoken';
+import usuarioRepo from '../repositories/usuario.js';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_objetos_perdidos_cambiar_en_produccion';
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const userId = req.headers['x-user-id'];
 
-        if (!token) {
+        if (!userId) {
             return res.status(401).json({
                 success: false,
-                message: 'No se envió token de autenticación.'
+                message: 'No se envió identificación de usuario.'
             });
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.usuario = decoded;
+        const usuario = await usuarioRepo.findOne(userId);
+
+        if (!usuario) {
+            return res.status(401).json({
+                success: false,
+                message: 'Usuario no encontrado.'
+            });
+        }
+
+        if (!usuario.activo) {
+            return res.status(403).json({
+                success: false,
+                message: 'Tu cuenta se encuentra bloqueada. Contacta al administrador.'
+            });
+        }
+
+        req.usuario = usuario.get ? usuario.get({ plain: true }) : usuario;
         next();
     } catch (error) {
         return res.status(401).json({
             success: false,
-            message: 'Token inválido o expirado.'
+            message: 'No se pudo identificar al usuario.'
         });
     }
 };

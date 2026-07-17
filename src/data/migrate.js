@@ -7,7 +7,6 @@ import Categoria from '../models/categoria.js';
 
 
 const usuarios = [
-    // Passwords en texto plano (referencia): admin / 1234 / 1234 / 1234
     { id: 1, codigo: 'admin',    nombre: 'Administrador', password: '$2b$10$lyviUM90K9CrcEzmECMS1OKiIk3AzUS3ZaU0BiwFsV5exiMrlrpwi', rol: 'admin',   activo: true },
     { id: 2, codigo: '20231456', nombre: 'Piero Leon',     password: '$2b$10$vk4GkmpiB3IXwLrjNybfxu38MCUaxmu5Qp6r8otJYNm1fvcGtr56.', rol: 'student', activo: true },
     { id: 3, codigo: '20220890', nombre: 'Ana Torres',     password: '$2b$10$vk4GkmpiB3IXwLrjNybfxu38MCUaxmu5Qp6r8otJYNm1fvcGtr56.', rol: 'student', activo: true },
@@ -25,7 +24,6 @@ const reclamos = [
     { id: 1, objetoId: 1, usuarioId: 2, evidencia: 'Tiene un sticker personalizado en la base trasera y usa switches custom.', estado: 'pendiente' }
 ];
 
-// Categorías base. El admin puede añadir más desde el panel (ver /categoria).
 const categorias = [
     { id: 1, nombre: 'Electrónicos' },
     { id: 2, nombre: 'Deportes' },
@@ -37,14 +35,12 @@ const categorias = [
 
 async function migrate() {
     try {
-        // Recrea las tablas según los modelos y carga la data semilla
         await sequelize.sync({ force: true });
         await Usuario.bulkCreate(usuarios);
         await Categoria.bulkCreate(categorias);
         await Objeto.bulkCreate(objetos);
         await Reclamo.bulkCreate(reclamos);
 
-        // Sincroniza las secuencias de los ids tras insertar ids explícitos
         for (const tabla of ['usuarios', 'categorias', 'objetos', 'reclamos']) {
             await sequelize.query(
                 `SELECT setval(pg_get_serial_sequence('${tabla}', 'id'), (SELECT MAX(id) FROM ${tabla}))`
